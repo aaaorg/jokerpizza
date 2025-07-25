@@ -1289,7 +1289,8 @@
         setTimeout(() => {
           const container = document.getElementById('qr-page-qr');
           if (container) {
-            const spaydData = `SPD*1.0*ACC:${iban}*AM:${amount}*CC:${currency}*MSG:${message}`;
+            const normalizedMessage = message.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+            const spaydData = `SPD*1.0*ACC:${iban}*AM:${amount}*CC:${currency}*MSG:${normalizedMessage}`;
 
             try {
               new QRCode(container, {
