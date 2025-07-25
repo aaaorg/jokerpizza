@@ -3,6 +3,8 @@
 **Jednoduchá webová aplikace pro férové rozpočítání společné útraty za pizzu – s QR kódy a podporou slev 2+1 zdarma.**  
 Užitečné nejen pro pizzu, ale i pro cokoliv, kde se skládá více lidí.
 
+**[Odkaz na aplikaci (hostováno přes Cloudflare Pages)](https://jokerpizza.pages.dev/)**
+
 ---
 
 ## 🧩 K čemu to je?
@@ -78,8 +80,16 @@ V blízké době vydám:
 
 ## 📷 Ukázka
 
-![zadání položek](docs/screenshot_1.png)
+### Zadání položek
+
+![Zadání položek](docs/screenshot_1.png)
+
+### Vygenerování výsledku
+
 ![Vygenerování výsledku](docs/screenshot_2.png)
+
+### Sdílený odkaz
+
 ![Sdílený odkaz](docs/screenshot_3.png)
 
 ---
