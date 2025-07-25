@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joker Pizza Kalkulačka</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <script src="qrcode.min.js"></script>
+  <script src="html2canvas.min.js"></script>
+  <style>
+    :root {
+      --primary-red: #BA0000;
+      --primary-black: #1a1a1a;
+      --primary-white: #ffffff;
+      --light-gray: #f5f5f5;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #666666;
+      --success-green: #4caf50;
+      --danger-red: #cf0829;
+      --warning-yellow: #ff9800;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+      --border-radius: 4px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--primary-black);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header Styles */
+    .header {
+      background-color: var(--primary-red);
+      color: var(--primary-white);
+      padding: 1.5rem 0;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-red);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .header-subtitle {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      display: none;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* Grid System */
+    .grid {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: 1fr;
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Card Component */
+    .card {
+      background: var(--primary-white);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card:not(:last-child) {
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--primary-red);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-black);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+      color: var(--dark-gray);
+      font-size: 0.875rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+      background-color: var(--primary-white);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-red);
+      box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-red);
+      color: var(--primary-white);
+    }
+
+    .btn-primary:hover {
+      background-color: #c91a20;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--dark-gray);
+      color: var(--primary-white);
+    }
+
+    .btn-secondary:hover {
+      background-color: #555;
+    }
+
+    .btn-danger {
+      background-color: var(--danger-red);
+      color: var(--primary-white);
+    }
+
+    .btn-danger:hover {
+      background-color: #da190b;
+    }
+
+    .btn-sm {
+      margin: 0 1px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+
+    /* Person Card */
+    .person-card {
+      background: var(--light-gray);
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: var(--transition);
+    }
+
+    .person-card:hover {
+      border-color: var(--primary-red);
+    }
+
+    .person-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .person-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--primary-black);
+    }
+
+    .person-price {
+      font-size: 0.875rem;
+      color: var(--dark-gray);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Extras */
+    .extras-list {
+      margin-bottom: 0.75rem;
+    }
+
+    .extra-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.25rem 0.5rem;
+      background: var(--primary-white);
+      border-radius: var(--border-radius);
+      margin-bottom: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .extra-form {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-end;
+    }
+
+    .extra-form .form-control {
+      font-size: 0.875rem;
+      padding: 0.375rem 0.5rem;
+    }
+
+    /* Summary */
+    .summary {
+      background: linear-gradient(135deg, var(--primary-red), #cf0829);
+      color: var(--primary-white);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 1rem;
+    }
+
+    .summary h3 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .summary-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+    }
+
+    .summary-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: block;
+    }
+
+    .summary-label {
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
+
+    /* Results */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .result-card {
+      background: var(--primary-white);
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .result-card:hover {
+      border-color: var(--primary-red);
+    }
+
+    .result-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary-black);
+    }
+
+    .result-amount {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-red);
+      margin-bottom: 1rem;
+    }
+
+    .breakdown {
+      background: var(--light-gray);
+      padding: 0.75rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 1rem;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    .breakdown-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+
+    .breakdown-line:last-child {
+      margin-bottom: 0;
+      font-weight: 600;
+      padding-top: 0.25rem;
+      border-top: 1px solid var(--medium-gray);
+    }
+
+    /* QR Code */
+    .qr-container {
+      margin: 1rem 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .qr-placeholder {
+      width: 180px;
+      height: 180px;
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--border-radius);
+      color: var(--dark-gray);
+      font-size: 0.875rem;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    /* Payment Message */
+    .payment-message {
+      background: var(--light-gray);
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      word-break: break-all;
+    }
+
+    /* Keyboard Hints */
+    .keyboard-hint {
+      font-size: 0.75rem;
+      color: var(--dark-gray);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--dark-gray);
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* QR Page Styles */
+    .qr-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary-red), #cf0829);
+      padding: 1rem;
+    }
+
+    .qr-page-card {
+      background: var(--primary-white);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .qr-page-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .qr-page-amount {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--primary-red);
+      margin-bottom: 1.5rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      color: var(--primary-red);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .header-subtitle {
+        display: block;
+      }
+
+      .grid-md-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 767px) {
+      .container {
+        padding: 0.5rem;
+      }
+
+      .card {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+      }
+
+      .header h1 {
+        font-size: 1.25rem;
+      }
+
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Loading State */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: white;
+      }
+
+      .header,
+      .btn,
+      .extra-form,
+      .keyboard-hint {
+        display: none !important;
+      }
+
+      .card {
+        box-shadow: none;
+        border: 1px solid var(--medium-gray);
+        break-inside: avoid;
+      }
+
+      .card:has(#boxPrice),
+      .card:has(#personName),
+      .card:has(#calculateBtn) {
+        display: none !important;
+      }
+
+      .result-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script>
+    // App State
+    const state = {
+      people: [],
+      settings: {
+        boxPrice: 15,
+        currency: 'CZK',
+        iban: ''
+      },
+      delivery: 0,
+      totalPaid: 0,
+      results: null
+    };
+
+    // Constants
+    const EXTRA_TYPES = ['Dip', 'Nápoj', 'Dezert', 'Jiné'];
+    const STORAGE_KEY = 'pizzaCalculatorSettings';
+
+    // Utility Functions
+    const utils = {
+      formatCurrency: (amount, currency = 'CZK') => {
+        const symbol = currency === 'EUR' ? '€' : 'Kč';
+        return `${Math.round(amount)} ${symbol}`;
+      },
+
+      generateId: () => Date.now() + Math.random().toString(36).substr(2, 9),
+
+      debounce: (func, wait) => {
+        let timeout;
+        return function executedFunction (...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      },
+
+      createElement: (tag, attrs = {}, children = []) => {
+        const element = document.createElement(tag);
+        Object.entries(attrs).forEach(([key, value]) => {
+          if (key === 'className') {
+            element.className = value;
+          } else if (key === 'onclick' || key.startsWith('on')) {
+            element[key] = value;
+          } else {
+            element.setAttribute(key, value);
+          }
+        });
+        children.forEach(child => {
+          if (typeof child === 'string') {
+            element.appendChild(document.createTextNode(child));
+          } else if (child) {
+            element.appendChild(child);
+          }
+        });
+        return element;
+      },
+
+      copyToClipboard: async (button, text, skipClipboard) => {
+        try {
+          if (!skipClipboard) {
+            await navigator.clipboard.writeText(text);
+          }
+          if (button) {
+            const original = button.innerText;
+            button.innerText = 'Zkopírováno!';
+            button.disabled = true;
+            setTimeout(() => {
+              button.innerText = original;
+              button.disabled = false;
+            }, 2000);
+          }
+        } catch (err) {
+          alert('Nepodařilo se zkopírovat do schránky.');
+        }
+      }
+    };
+
+    // Storage Functions
+    const storage = {
+      load: () => {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            const settings = JSON.parse(saved);
+            state.settings = { ...state.settings, ...settings };
+            console.log('Settings loaded:', state.settings);
+          }
+        } catch (error) {
+          console.error('Failed to load settings:', error);
+        }
+      },
+
+      save: utils.debounce(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state.settings));
+          console.log('Settings saved:', state.settings);
+        } catch (error) {
+          console.error('Failed to save settings:', error);
+        }
+      }, 500)
+    };
+
+    // Business Logic
+    const calculator = {
+      addPerson: (name, pizzaPrice) => {
+        if (!name || !pizzaPrice || pizzaPrice <= 0) {
+          alert('Prosím vyplňte jméno a platnou cenu pizzy');
+          return false;
+        }
+
+        const person = {
+          id: utils.generateId(),
+          name: name.trim(),
+          pizzaPrice: parseFloat(pizzaPrice),
+          extras: []
+        };
+
+        state.people.push(person);
+        console.log('Person added:', person);
+        return true;
+      },
+
+      removePerson: (personId) => {
+        state.people = state.people.filter(p => p.id !== personId);
+        console.log('Person removed:', personId);
+      },
+
+      addExtra: (personId, type, price) => {
+        const person = state.people.find(p => p.id === personId);
+        if (!person || price <= 0) return false;
+
+        const extra = {
+          id: utils.generateId(),
+          type,
+          price: parseFloat(price)
+        };
+
+        person.extras.push(extra);
+        console.log('Extra added:', extra, 'to person:', personId);
+        return true;
+      },
+
+      removeExtra: (personId, extraId) => {
+        const person = state.people.find(p => p.id === personId);
+        if (!person) return;
+
+        person.extras = person.extras.filter(e => e.id !== extraId);
+        console.log('Extra removed:', extraId, 'from person:', personId);
+      },
+
+      calculate: () => {
+        if (state.people.length === 0) {
+          alert('Přidejte nejprve nějaké osoby');
+          return null;
+        }
+
+        state.totalPaid = document.getElementById('totalPaid').value;
+        if (!state.totalPaid || state.totalPaid <= 0) {
+          alert('Prosím zadejte celkovou zaplacenou částku');
+          return null;
+        }
+
+        const boxPrice = parseFloat(state.settings.boxPrice) || 0;
+        const delivery = parseFloat(state.delivery) || 0;
+        const totalPaid = parseFloat(state.totalPaid);
+
+        // Calculate totals
+        const totalPizzaAndBoxes = state.people.reduce((sum, person) =>
+          sum + person.pizzaPrice + boxPrice, 0
+        );
+
+        const totalExtras = state.people.reduce((sum, person) =>
+          sum + person.extras.reduce((extraSum, extra) => extraSum + extra.price, 0), 0
+        );
+
+        const deliveryPerPerson = delivery / state.people.length;
+        const totalSubjectToDiscount = totalPizzaAndBoxes + delivery;
+        const discountRatio = totalPaid / totalSubjectToDiscount;
+
+        // Create results for each person
+        const results = state.people.map(person => {
+          const pizzaAndBox = person.pizzaPrice + boxPrice;
+          const personExtras = person.extras.reduce((sum, extra) => sum + extra.price, 0);
+          const discountedAmount = (pizzaAndBox + deliveryPerPerson) * discountRatio;
+          const finalAmount = discountedAmount + personExtras;
+
+          return {
+            ...person,
+            pizzaAndBox,
+            personExtras,
+            deliveryPerPerson,
+            discountedAmount,
+            finalAmount,
+            discountRatio
+          };
+        });
+
+        state.results = {
+          totalPizzaAndBoxes,
+          totalExtras,
+          delivery,
+          totalPaid,
+          discountRatio,
+          results
+        };
+
+        console.log('Calculation completed:', state.results);
+        return state.results;
+      }
+    };
+
+    // QR Code Generation
+    const qrGenerator = {
+      generate: (containerId, person, iban, currency) => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        if (!iban) {
+          container.appendChild(
+            utils.createElement('div', { className: 'qr-placeholder' }, [
+              utils.createElement('div', {}, [
+                utils.createElement('div', {}, ['Zadejte IBAN']),
+                utils.createElement('div', {}, ['v konfiguraci'])
+              ])
+            ])
+          );
+          return;
+        }
+
+        const paymentMessage = `PIZZA ${person.name}${person.extras.length > 0 ?
+          ' + ' + person.extras.map(e => e.type.toLowerCase()).join(' + ') : ''}`;
+        const normalizedMessage = paymentMessage.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+
+        const spaydData = `SPD*1.0*ACC:${iban}*AM:${Math.round(person.finalAmount)}*CC:${currency}*MSG:${normalizedMessage}`;
+
+        try {
+          new QRCode(container, {
+            text: spaydData,
+            width: 180,
+            height: 180,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+          console.log('QR code generated for:', person.name);
+        } catch (error) {
+          console.error('QR Code generation failed:', error);
+          container.appendChild(
+            utils.createElement('div', { className: 'qr-placeholder' }, [
+              'QR kód se nepodařilo vygenerovat'
+            ])
+          );
+        }
+      }
+    };
+
+    // UI Components
+    const components = {
+      header: () => {
+        return utils.createElement('header', { className: 'header' }, [
+          utils.createElement('div', { className: 'header-content' }, [
+            utils.createElement('a', { href: '/', className: 'logo' }, ['🍕']),
+            utils.createElement('h1', {}, ['Joker Pizza - Kalkulačka']),
+            utils.createElement('p', { className: 'header-subtitle' }, [
+              'Spravedlivé rozdělení ceny pizzy včetně slevy 2+1 zdarma'
+            ]),
+            utils.createElement('a', {
+              href: 'https://www.jokerpizza.cz/section/5020/pizza-40cm',
+              className: 'btn btn-secondary',
+            }, ['OBJEDNAT ONLINE']),
+          ])
+        ]);
+      },
+
+      configurationSection: () => {
+        const section = utils.createElement('div', { className: 'card' }, [
+          utils.createElement('div', { className: 'card-header' }, [
+            utils.createElement('span', {}, ['⚙️']),
+            utils.createElement('h2', { className: 'card-title' }, ['Konfigurace'])
+          ]),
+          utils.createElement('div', { className: 'form-row' }, [
+            utils.createElement('div', { className: 'form-group' }, [
+              utils.createElement('label', { for: 'boxPrice' }, ['Cena krabice (Kč):']),
+              utils.createElement('input', {
+                type: 'number',
+                id: 'boxPrice',
+                className: 'form-control',
+                value: state.settings.boxPrice,
+                min: '0',
+                step: '1',
+                onchange: (e) => {
+                  state.settings.boxPrice = e.target.value;
+                  storage.save();
+                }
+              })
+            ]),
+            utils.createElement('div', { className: 'form-group' }, [
+              utils.createElement('label', { for: 'currency' }, ['Měna:']),
+              utils.createElement('select', {
+                id: 'currency',
+                className: 'form-control',
+                value: state.settings.currency,
+                onchange: (e) => {
+                  state.settings.currency = e.target.value;
+                  storage.save();
+                }
+              }, [
+                utils.createElement('option', { value: 'CZK' }, ['CZK (Kč)'])
+              ])
+            ])
+          ]),
+          utils.createElement('div', { className: 'form-group' }, [
+            utils.createElement('label', { for: 'iban' }, ['IBAN pro platby (nutné k vygenerování QR kódu):']),
+            utils.createElement('input', {
+              type: 'text',
+              id: 'iban',
+              className: 'form-control',
+              placeholder: 'CZ1234567890123456789012',
+              value: state.settings.iban,
+              onchange: (e) => {
+                state.settings.iban = e.target.value;
+                storage.save();
+              }
+            })
+          ])
+        ]);
+
+        return section;
+      },
+
+      addPersonSection: () => {
+        return utils.createElement('div', { className: 'card' }, [
+          utils.createElement('form', {
+            id: 'addPersonForm',
+            onsubmit: (e) => {
+              e.preventDefault();
+              const nameInput = document.getElementById('personName');
+              const priceInput = document.getElementById('pizzaPrice');
+
+              if (calculator.addPerson(nameInput.value, priceInput.value)) {
+                nameInput.value = '';
+                priceInput.value = '';
+                render();
+                document.getElementById('personName').focus();
+              }
+            }
+          }, [
+            utils.createElement('div', { className: 'card-header' }, [
+              utils.createElement('span', {}, ['👥']),
+              utils.createElement('h2', { className: 'card-title' }, ['Přidat osobu'])
+            ]),
+            utils.createElement('div', { className: 'form-row' }, [
+              utils.createElement('div', { className: 'form-group' }, [
+                utils.createElement('label', { for: 'personName' }, ['Jméno:']),
+                utils.createElement('input', {
+                  type: 'text',
+                  id: 'personName',
+                  name: 'name',
+                  autocomplete: 'on',
+                  className: 'form-control',
+                  placeholder: 'Jan Novák',
+                  onkeypress: (e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      document.getElementById('pizzaPrice').focus();
+                    }
+                  }
+                })
+              ]),
+              utils.createElement('div', { className: 'form-group' }, [
+                utils.createElement('label', { for: 'pizzaPrice' }, ['Cena pizzy (Kč):']),
+                utils.createElement('input', {
+                  type: 'number',
+                  id: 'pizzaPrice',
+                  name: 'price',
+                  autocomplete: 'off',
+                  className: 'form-control',
+                  placeholder: '269',
+                  min: '0',
+                  step: '1',
+                  onkeypress: (e) => {
+                    if (e.key === 'Enter') {
+                      document.getElementById('addPersonBtn').click();
+                    }
+                  }
+                })
+              ])
+            ]),
+            utils.createElement('button', {
+              id: 'addPersonBtn',
+              className: 'btn btn-primary',
+              type: 'submit',
+            }, ['Přidat osobu']),
+            utils.createElement('div', { className: 'keyboard-hint' }, [
+              'Tip: Rychlé přidávání pomocí kláves TAB a ENTER.'
+            ])
+          ])
+        ]);
+      },
+
+      personCard: (person) => {
+        const boxPrice = parseFloat(state.settings.boxPrice) || 0;
+
+        return utils.createElement('div', { className: 'person-card fade-in' }, [
+          utils.createElement('div', { className: 'person-header' }, [
+            utils.createElement('span', { className: 'person-name' }, [person.name]),
+            utils.createElement('button', {
+              className: 'btn btn-danger btn-sm',
+              onclick: () => {
+                calculator.removePerson(person.id);
+                render();
+              }
+            }, ['Odstranit'])
+          ]),
+          utils.createElement('div', { className: 'person-price' }, [
+            utils.createElement('strong', {}, ['Pizza: ']),
+            utils.formatCurrency(person.pizzaPrice),
+            ' + krabice: ',
+            utils.formatCurrency(boxPrice)
+          ]),
+          utils.createElement('div', { className: 'extras-list' },
+            person.extras.map(extra =>
+              utils.createElement('div', { className: 'extra-item' }, [
+                utils.createElement('span', {}, [extra.type]),
+                utils.createElement('span', {}, [
+                  utils.formatCurrency(extra.price),
+                  ' ',
+                  utils.createElement('button', {
+                    className: 'btn btn-danger btn-sm',
+                    style: 'padding: 2px 6px; font-size: 0.75rem;',
+                    onclick: () => {
+                      calculator.removeExtra(person.id, extra.id);
+                      render();
+                    }
+                  }, ['×'])
+                ])
+              ])
+            )
+          ),
+          utils.createElement('div', { className: 'extra-form' }, [
+            utils.createElement('select', {
+              id: `extraType_${person.id}`,
+              className: 'form-control'
+            }, EXTRA_TYPES.map(type =>
+              utils.createElement('option', { value: type }, [type])
+            )),
+            utils.createElement('input', {
+              type: 'number',
+              id: `extraPrice_${person.id}`,
+              className: 'form-control',
+              placeholder: 'Cena',
+              min: '0',
+              step: '1',
+              onkeypress: (e) => {
+                if (e.key === 'Enter') {
+                  const typeSelect = document.getElementById(`extraType_${person.id}`);
+                  const priceInput = document.getElementById(`extraPrice_${person.id}`);
+
+                  if (calculator.addExtra(person.id, typeSelect.value, priceInput.value)) {
+                    priceInput.value = '';
+                    render();
+                  }
+                }
+              }
+            }),
+            utils.createElement('button', {
+              className: 'btn btn-secondary btn-sm',
+              onclick: () => {
+                const typeSelect = document.getElementById(`extraType_${person.id}`);
+                const priceInput = document.getElementById(`extraPrice_${person.id}`);
+
+                if (calculator.addExtra(person.id, typeSelect.value, priceInput.value)) {
+                  priceInput.value = '';
+                  render();
+                }
+              }
+            }, ['+'])
+          ])
+        ]);
+      },
+
+      peopleSection: () => {
+        return utils.createElement('div', { className: 'card' }, [
+          utils.createElement('div', { className: 'card-header' }, [
+            utils.createElement('span', {}, ['📋']),
+            utils.createElement('h2', { className: 'card-title' }, ['Seznam osob'])
+          ]),
+          state.people.length === 0 ?
+            utils.createElement('div', { className: 'empty-state' }, [
+              utils.createElement('div', { className: 'empty-state-icon' }, ['🍕']),
+              utils.createElement('p', {}, ['Zatím nebyla přidána žádná osoba'])
+            ]) :
+            utils.createElement('div', {}, state.people.map(person =>
+              components.personCard(person)
+            ))
+        ]);
+      },
+
+      calculationSection: () => {
+        return utils.createElement('div', { className: 'card' }, [
+          utils.createElement('div', { className: 'card-header' }, [
+            utils.createElement('span', {}, ['💰']),
+            utils.createElement('h2', { className: 'card-title' }, ['Finální výpočet'])
+          ]),
+          utils.createElement('div', { className: 'form-row' }, [
+            utils.createElement('div', { className: 'form-group' }, [
+              utils.createElement('label', { for: 'delivery' }, ['Dopravné (Kč):']),
+              utils.createElement('input', {
+                type: 'number',
+                id: 'delivery',
+                className: 'form-control',
+                value: state.delivery,
+                min: '0',
+                step: '1',
+                onchange: (e) => {
+                  state.delivery = e.target.value;
+                }
+              })
+            ]),
+            utils.createElement('div', { className: 'form-group' }, [
+              utils.createElement('label', { for: 'totalPaid' }, ['Celkem zaplaceno (Kč):']),
+              utils.createElement('input', {
+                type: 'number',
+                id: 'totalPaid',
+                className: 'form-control',
+                placeholder: '1169',
+                value: state.totalPaid,
+                min: '0',
+                step: '1',
+                onchange: (e) => {
+                  state.totalPaid = e.target.value;
+                },
+                onkeypress: (e) => {
+                  if (e.key === 'Enter') {
+                    document.getElementById('calculateBtn').click();
+                  }
+                }
+              })
+            ])
+          ]),
+          utils.createElement('button', {
+            id: 'calculateBtn',
+            className: 'btn btn-primary btn-block',
+            onclick: () => {
+              if (calculator.calculate()) {
+                render();
+              }
+            }
+          }, ['Vypočítat a generovat QR kódy']),
+          utils.createElement('div', { className: 'keyboard-hint' }, [
+            'Tip: Ctrl+ENTER kdekoli pro zadání celkové ceny a výpočet'
+          ])
+        ]);
+      },
+
+      summarySection: (results) => {
+        const { totalPizzaAndBoxes, totalExtras, delivery, totalPaid, discountRatio } = results;
+
+        return utils.createElement('div', { className: 'summary fade-in' }, [
+          utils.createElement('h3', {}, ['📊 Souhrn objednávky']),
+          utils.createElement('div', { className: 'summary-grid' }, [
+            utils.createElement('div', { className: 'summary-item' }, [
+              utils.createElement('span', { className: 'summary-value' }, [
+                utils.formatCurrency(totalPizzaAndBoxes)
+              ]),
+              utils.createElement('span', { className: 'summary-label' }, ['Pizzy + krabice'])
+            ]),
+            utils.createElement('div', { className: 'summary-item' }, [
+              utils.createElement('span', { className: 'summary-value' }, [
+                utils.formatCurrency(delivery)
+              ]),
+              utils.createElement('span', { className: 'summary-label' }, ['Dopravné'])
+            ]),
+            utils.createElement('div', { className: 'summary-item' }, [
+              utils.createElement('span', { className: 'summary-value' }, [
+                utils.formatCurrency(totalExtras)
+              ]),
+              utils.createElement('span', { className: 'summary-label' }, ['Dipy a další'])
+            ]),
+            utils.createElement('div', { className: 'summary-item' }, [
+              utils.createElement('span', { className: 'summary-value' }, [
+                utils.formatCurrency(totalPaid)
+              ]),
+              utils.createElement('span', { className: 'summary-label' }, ['Celkem zaplaceno'])
+            ]),
+            utils.createElement('div', { className: 'summary-item' }, [
+              utils.createElement('span', { className: 'summary-value' }, [
+                (100 - (discountRatio * 100)).toFixed(1) + '%'
+              ]),
+              utils.createElement('span', { className: 'summary-label' }, ['Slevy na pizzy'])
+            ]),
+            utils.createElement('div', { className: 'summary-item' }, [
+              utils.createElement('span', { className: 'summary-value' }, [
+                state.people.length.toString()
+              ]),
+              utils.createElement('span', { className: 'summary-label' }, ['Počet osob'])
+            ])
+          ])
+        ]);
+      },
+
+      resultCard: (person) => {
+        const boxPrice = parseFloat(state.settings.boxPrice) || 0;
+        const paymentMessage = `PIZZA ${person.name}${person.extras.length > 0 ?
+          ' + ' + person.extras.map(e => e.type.toLowerCase()).join(' + ') : ''}`;
+
+        const qrContainerId = `qr_${person.id}`;
+
+        // Generate QR after DOM update
+        setTimeout(() => {
+          qrGenerator.generate(qrContainerId, person, state.settings.iban, state.settings.currency);
+        }, 100);
+
+        return utils.createElement('div', { className: 'result-card fade-in' }, [
+          utils.createElement('h4', { className: 'result-name' }, [person.name]),
+          utils.createElement('div', { className: 'result-amount' }, [
+            utils.formatCurrency(person.finalAmount)
+          ]),
+          utils.createElement('div', { className: 'breakdown' }, [
+            utils.createElement('div', { className: 'breakdown-line' }, [
+              utils.createElement('span', {}, ['Pizza:']),
+              utils.createElement('span', {}, [utils.formatCurrency(person.pizzaPrice)])
+            ]),
+            utils.createElement('div', { className: 'breakdown-line' }, [
+              utils.createElement('span', {}, ['Krabice:']),
+              utils.createElement('span', {}, [utils.formatCurrency(boxPrice)])
+            ]),
+            person.deliveryPerPerson > 0 ? utils.createElement('div', { className: 'breakdown-line' }, [
+              utils.createElement('span', {}, ['Doprava (podíl):']),
+              utils.createElement('span', {}, [utils.formatCurrency(person.deliveryPerPerson)])
+            ]) : null,
+            utils.createElement('div', { className: 'breakdown-line' }, [
+              utils.createElement('span', {}, [utils.createElement('strong', {}, ['Po slevě:'])]),
+              utils.createElement('span', {}, [
+                utils.createElement('strong', {}, [utils.formatCurrency(person.discountedAmount)])
+              ])
+            ]),
+            person.personExtras > 0 ? utils.createElement('div', { className: 'breakdown-line' }, [
+              utils.createElement('span', {}, ['Dipy a další:']),
+              utils.createElement('span', {}, ['+' + utils.formatCurrency(person.personExtras)])
+            ]) : null
+          ]),
+          utils.createElement('div', { className: 'qr-container' }, [
+            utils.createElement('div', { id: qrContainerId })
+          ]),
+          utils.createElement('div', { className: 'payment-message' }, [paymentMessage]),
+          utils.createElement('button', {
+            className: 'btn btn-secondary btn-sm',
+            onclick: (e) => {
+              const url = `${window.location.origin}${window.location.pathname}?qr=1&name=${encodeURIComponent(person.name)}&amount=${Math.round(person.finalAmount)}&currency=${state.settings.currency}&iban=${encodeURIComponent(state.settings.iban)}&message=${encodeURIComponent(paymentMessage)}`;
+              utils.copyToClipboard(e.target, url);
+            }
+          }, ['🔗 Zkopírovat odkaz']),
+          utils.createElement('button', {
+            className: 'btn btn-secondary btn-sm',
+            style: 'margin-top: 0.5rem;',
+            onclick: async (e) => {
+              const card = e.target.closest('.result-card');
+              if (card) {
+                const canvas = await html2canvas(card, {
+                  scale: 1.5,
+                  onclone: (document) => {
+                    document.querySelectorAll('.result-card').forEach(div => {
+                      div.classList.remove('fade-in');
+                    });
+                  }
+                });
+                canvas.toBlob(blob => {
+                  navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': blob })
+                  ]).then(() => utils.copyToClipboard(e.target, null, true));
+                });
+              }
+            }
+          }, ['🖼️ Zkopírovat kartu'])
+        ]);
+      },
+
+      resultsSection: (results) => {
+        return utils.createElement('div', { className: 'card' }, [
+          utils.createElement('div', { className: 'card-header' }, [
+            utils.createElement('span', {}, ['💳']),
+            utils.createElement('h2', { className: 'card-title' }, ['Výsledky s QR kódy'])
+          ]),
+          utils.createElement('div', { className: 'results-grid' },
+            results.results.map(person => components.resultCard(person))
+          )
+        ]);
+      },
+
+      qrPage: (params) => {
+        const { name, amount, currency, iban, message } = params;
+        const currencySymbol = currency === 'EUR' ? '€' : 'Kč';
+
+        setTimeout(() => {
+          const container = document.getElementById('qr-page-qr');
+          if (container) {
+            const spaydData = `SPD*1.0*ACC:${iban}*AM:${amount}*CC:${currency}*MSG:${message}`;
+
+            try {
+              new QRCode(container, {
+                text: spaydData,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+              });
+            } catch (error) {
+              console.error('QR Code generation failed:', error);
+              container.innerHTML = '<div class="qr-placeholder">QR kód se nepodařilo vygenerovat</div>';
+            }
+          }
+        }, 100);
+
+        return utils.createElement('div', { className: 'qr-page' }, [
+          utils.createElement('div', { className: 'qr-page-card' }, [
+            utils.createElement('div', { className: 'qr-page-icon' }, ['🍕']),
+            utils.createElement('div', { className: 'qr-page-icon' }, ['QR Platba']),
+            utils.createElement('div', { className: 'result-name' }, ['Jméno: ', name]),
+            utils.createElement('div', { className: 'qr-page-amount' }, [
+              utils.formatCurrency(amount, currency)
+            ]),
+            utils.createElement('div', { className: 'qr-container' }, [
+              utils.createElement('div', { id: 'qr-page-qr' })
+            ]),
+            utils.createElement('div', { className: 'payment-message' }, [message]),
+          ])
+        ]);
+      }
+    };
+
+    // Main render function
+    function render () {
+      const app = document.getElementById('app');
+
+      // Check if we're showing QR page
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('qr') === '1') {
+        const params = {
+          name: urlParams.get('name'),
+          amount: urlParams.get('amount'),
+          currency: urlParams.get('currency') || 'CZK',
+          iban: urlParams.get('iban'),
+          message: urlParams.get('message')
+        };
+
+        if (params.name && params.amount && params.iban && params.message) {
+          app.innerHTML = '';
+          app.appendChild(components.qrPage(params));
+          return;
+        }
+      }
+
+      // Main app layout
+      app.innerHTML = '';
+
+      app.appendChild(components.header());
+
+      const container = utils.createElement('div', { className: 'container' });
+
+      const mainGrid = utils.createElement('div', {
+        className: 'grid grid-md-cols-2'
+      });
+
+      // Left column
+      const leftColumn = utils.createElement('div', {}, [
+        components.configurationSection(),
+        components.addPersonSection(),
+        components.calculationSection()
+      ]);
+
+      // Right column
+      const rightColumn = utils.createElement('div', {}, [
+        components.peopleSection()
+      ]);
+
+      mainGrid.appendChild(leftColumn);
+      mainGrid.appendChild(rightColumn);
+      container.appendChild(mainGrid);
+
+      // Results section
+      if (state.results) {
+        container.appendChild(components.summarySection(state.results));
+        container.appendChild(components.resultsSection(state.results));
+      }
+
+      app.appendChild(container);
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Pizza Calculator App initialized');
+      storage.load();
+      render();
+
+      // If IBAN is provided, focus personName input, otherwise focus IBAN input
+      const ibanInput = document.getElementById('iban');
+      if (ibanInput && ibanInput.value) {
+        const personNameInput = document.getElementById('personName');
+        if (personNameInput) {
+          personNameInput.focus();
+        }
+      } else if (ibanInput) {
+        ibanInput.focus();
+      }
+
+      // Global keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'Enter') {
+          e.preventDefault();
+          const totalPaid = document.getElementById('totalPaid');
+          if (totalPaid && totalPaid.value <= 0) {
+            totalPaid.focus();
+            totalPaid.select();
+          } else {
+            const calculateBtn = document.getElementById('calculateBtn');
+            if (calculateBtn) {
+              calculateBtn.focus();
+              calculateBtn.click();
+            }
+          }
+        }
+      });
+    });
+
+    // Expose state for debugging
+    window.pizzaAppState = state;
+  </script>
+</body>
+
+</html>
